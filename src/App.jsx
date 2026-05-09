@@ -8,19 +8,78 @@ import {
   Loader2, 
   TestTube2, 
   Flag, 
-  Trello, 
+  Kanban, 
   History, 
-  Clock 
+  Clock,
+  Settings,
+  Plus,
+  Edit2,
+  Trash2,
+  Save,
+  X
 } from 'lucide-react';
+
+const defaultProjects = [
+  {
+    id: '1',
+    title: 'NGO Website Template',
+    description: 'A modern, accessible, and donation-ready platform for non-profits.',
+    status: 'Active Development',
+    url: '#'
+  }
+];
 
 function App() {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [lastUpdated, setLastUpdated] = useState('');
 
+  // Project State
+  const [projects, setProjects] = useState(() => {
+    const saved = localStorage.getItem('projects');
+    return saved ? JSON.parse(saved) : defaultProjects;
+  });
+  
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [formData, setFormData] = useState({ title: '', description: '', status: '', url: '' });
+
   useEffect(() => {
     const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
     setLastUpdated(new Date().toLocaleDateString('en-US', options));
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('projects', JSON.stringify(projects));
+  }, [projects]);
+
+  const handleAddProject = () => {
+    const newProject = {
+      id: Date.now().toString(),
+      title: 'New Project',
+      description: 'Project description here...',
+      status: 'Planning',
+      url: '#'
+    };
+    setProjects([newProject, ...projects]);
+    setEditingId(newProject.id);
+    setFormData(newProject);
+  };
+
+  const handleEdit = (project) => {
+    setEditingId(project.id);
+    setFormData(project);
+  };
+
+  const handleSave = () => {
+    setProjects(projects.map(p => p.id === editingId ? { ...p, ...formData } : p));
+    setEditingId(null);
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm('Are you sure you want to delete this project?')) {
+      setProjects(projects.filter(p => p.id !== id));
+    }
+  };
 
   return (
     <>
@@ -31,53 +90,186 @@ function App() {
             <LayoutDashboard className="text-brand-blue w-6 h-6" />
             <span className="font-bold text-xl text-gray-900 tracking-tight">Developer Showcase</span>
           </div>
-          <a href="mailto:developer@example.com" className="inline-flex items-center gap-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-brand-blue bg-blue-50 hover:bg-blue-100 transition-colors">
-            <Mail className="w-4 h-4" />
-            Contact Developer
-          </a>
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setIsEditMode(!isEditMode)}
+              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                isEditMode ? 'bg-brand-blue text-white' : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              <Settings className="w-4 h-4" />
+              <span className="hidden sm:inline">{isEditMode ? 'Exit Edit Mode' : 'Edit Mode'}</span>
+            </button>
+            <a href="mailto:developer@example.com" className="inline-flex items-center gap-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-brand-blue bg-blue-50 hover:bg-blue-100 transition-colors">
+              <Mail className="w-4 h-4" />
+              <span className="hidden sm:inline">Contact Developer</span>
+            </a>
+          </div>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
         
-        {/* Hero Section */}
-        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 text-center relative overflow-hidden">
-          {/* Top Gradient Accent */}
-          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-brand-blue to-brand-green"></div>
-          
-          {/* Status Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-50 border border-green-200 text-green-700 text-sm font-medium mb-6">
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-            </span>
-            Active Development
+        {/* Projects Hero Section */}
+        <section className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-gray-900">Ongoing Projects</h2>
+            {isEditMode && (
+              <button 
+                onClick={handleAddProject}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition-colors"
+              >
+                <Plus className="w-4 h-4" /> Add Project
+              </button>
+            )}
           </div>
 
-          {/* Headline */}
-          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-4">
-            Project Status: <br className="hidden sm:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue to-brand-green">NGO Website Template</span>
-          </h1>
-          
-          {/* Subheadline */}
-          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-8">
-            A modern, accessible, and donation-ready platform for non-profits.
-          </p>
+          <div className="grid grid-cols-1 gap-8">
+            {projects.length === 0 && (
+              <div className="text-center py-12 bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl">
+                <p className="text-gray-500">No projects available.</p>
+              </div>
+            )}
 
-          {/* Call to Action */}
-          <a href="#" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-8 py-3.5 border border-transparent text-base font-semibold rounded-lg text-white bg-brand-blue hover:bg-blue-800 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5">
-            View Live Deployed Template
-            <ExternalLink className="w-5 h-5" />
-          </a>
+            {projects.map((project) => (
+              <div key={project.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 relative overflow-hidden group">
+                <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-brand-blue to-brand-green"></div>
+                
+                {isEditMode && editingId !== project.id && (
+                  <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onClick={() => handleEdit(project)} className="p-2 bg-blue-50 text-brand-blue rounded-full hover:bg-blue-100 transition-colors shadow-sm">
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button onClick={() => handleDelete(project.id)} className="p-2 bg-red-50 text-red-600 rounded-full hover:bg-red-100 transition-colors shadow-sm">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+
+                {editingId === project.id ? (
+                  <div className="max-w-2xl mx-auto text-left space-y-4 bg-gray-50 p-6 rounded-xl border border-gray-200 relative z-10">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Project Title</label>
+                      <input 
+                        type="text" 
+                        value={formData.title} 
+                        onChange={(e) => setFormData({...formData, title: e.target.value})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-brand-blue focus:border-brand-blue"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                      <textarea 
+                        value={formData.description} 
+                        onChange={(e) => setFormData({...formData, description: e.target.value})}
+                        rows={3}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-brand-blue focus:border-brand-blue"
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Status Badge Text</label>
+                        <input 
+                          type="text" 
+                          value={formData.status} 
+                          onChange={(e) => setFormData({...formData, status: e.target.value})}
+                          placeholder="e.g. Active Development"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-brand-blue focus:border-brand-blue"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Deployed URL</label>
+                        <input 
+                          type="text" 
+                          value={formData.url} 
+                          onChange={(e) => setFormData({...formData, url: e.target.value})}
+                          placeholder="https://..."
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-brand-blue focus:border-brand-blue"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex justify-end gap-3 mt-4 pt-4 border-t border-gray-200">
+                      <button 
+                        onClick={() => setEditingId(null)}
+                        className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 font-medium rounded-md text-sm transition-colors"
+                      >
+                        <X className="w-4 h-4" /> Cancel
+                      </button>
+                      <button 
+                        onClick={handleSave}
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-brand-blue text-white hover:bg-blue-800 font-medium rounded-md text-sm transition-colors shadow-sm"
+                      >
+                        <Save className="w-4 h-4" /> Save Changes
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center relative z-0">
+                    {/* Status Badge */}
+                    {project.status && (
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-50 border border-green-200 text-green-700 text-sm font-medium mb-6">
+                        <span className="relative flex h-3 w-3">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                        </span>
+                        {project.status}
+                      </div>
+                    )}
+
+                    {/* Headline */}
+                    <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-4">
+                      {project.title.includes(':') ? (
+                        <>
+                          {project.title.split(':')[0]}: <br className="hidden sm:block" />
+                          <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue to-brand-green">
+                            {project.title.substring(project.title.indexOf(':') + 1).trim()}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue to-brand-green">
+                          {project.title}
+                        </span>
+                      )}
+                    </h1>
+                    
+                    {/* Subheadline */}
+                    <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-8 whitespace-pre-wrap">
+                      {project.description}
+                    </p>
+
+                    {/* Call to Action */}
+                    <a 
+                      href={project.url && project.url !== '#' ? project.url : '#'} 
+                      target={project.url && project.url !== '#' ? "_blank" : "_self"} 
+                      rel="noopener noreferrer" 
+                      onClick={(e) => {
+                        if(!project.url || project.url === '#') {
+                          e.preventDefault();
+                          alert('No deployed URL has been set for this project yet.');
+                        }
+                      }}
+                      className={`inline-flex items-center gap-2 px-8 py-3.5 border border-transparent text-base font-semibold rounded-lg text-white shadow-md transition-all transform hover:-translate-y-0.5 ${
+                        project.url && project.url !== '#' 
+                          ? 'bg-brand-blue hover:bg-blue-800 hover:shadow-lg' 
+                          : 'bg-gray-400 cursor-not-allowed'
+                      }`}
+                    >
+                      {project.url && project.url !== '#' ? 'View Live Deployed Template' : 'Deployment Pending'}
+                      <ExternalLink className="w-5 h-5" />
+                    </a>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </section>
 
         {/* Visual Progress Tracker (Timeline) */}
         <section>
           <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
             <Milestone className="text-brand-blue w-6 h-6" />
-            Project Timeline
+            Global Timeline
           </h2>
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
             {/* Desktop View (Horizontal) */}
@@ -208,7 +400,7 @@ function App() {
         {/* Feature Kanban / Checklist */}
         <section>
           <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <Trello className="text-brand-blue w-6 h-6" />
+            <Kanban className="text-brand-blue w-6 h-6" />
             Feature Status
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
