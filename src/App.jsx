@@ -1,122 +1,331 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React, { useState, useEffect } from 'react';
+import { 
+  LayoutDashboard, 
+  Mail, 
+  ExternalLink, 
+  Milestone, 
+  Check, 
+  Loader2, 
+  TestTube2, 
+  Flag, 
+  Trello, 
+  History, 
+  Clock 
+} from 'lucide-react';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [lastUpdated, setLastUpdated] = useState('');
+
+  useEffect(() => {
+    const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    setLastUpdated(new Date().toLocaleDateString('en-US', options));
+  }, []);
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+      {/* Header & Navigation */}
+      <header className="bg-white shadow-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <LayoutDashboard className="text-brand-blue w-6 h-6" />
+            <span className="font-bold text-xl text-gray-900 tracking-tight">Developer Showcase</span>
+          </div>
+          <a href="mailto:developer@example.com" className="inline-flex items-center gap-2 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-brand-blue bg-blue-50 hover:bg-blue-100 transition-colors">
+            <Mail className="w-4 h-4" />
+            Contact Developer
+          </a>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+        
+        {/* Hero Section */}
+        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 text-center relative overflow-hidden">
+          {/* Top Gradient Accent */}
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-brand-blue to-brand-green"></div>
+          
+          {/* Status Badge */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-50 border border-green-200 text-green-700 text-sm font-medium mb-6">
+            <span className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+            </span>
+            Active Development
+          </div>
+
+          {/* Headline */}
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-4">
+            Project Status: <br className="hidden sm:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue to-brand-green">NGO Website Template</span>
+          </h1>
+          
+          {/* Subheadline */}
+          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+            A modern, accessible, and donation-ready platform for non-profits.
+          </p>
+
+          {/* Call to Action */}
+          <a href="#" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-8 py-3.5 border border-transparent text-base font-semibold rounded-lg text-white bg-brand-blue hover:bg-blue-800 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5">
+            View Live Deployed Template
+            <ExternalLink className="w-5 h-5" />
+          </a>
+        </section>
+
+        {/* Visual Progress Tracker (Timeline) */}
+        <section>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+            <Milestone className="text-brand-blue w-6 h-6" />
+            Project Timeline
+          </h2>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+            {/* Desktop View (Horizontal) */}
+            <div className="hidden md:block">
+              <div className="relative flex justify-between items-center w-full">
+                {/* Background Line */}
+                <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-full h-1 bg-gray-200 z-0"></div>
+                {/* Progress Line (covers up to step 3) */}
+                <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-1/2 h-1 bg-brand-blue z-0"></div>
+                
+                {/* Step 1: Completed */}
+                <div className="relative z-10 flex flex-col items-center group w-32">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center bg-green-500 text-white shadow ring-4 ring-white">
+                    <Check className="w-5 h-5" />
+                  </div>
+                  <div className="mt-3 text-center">
+                    <p className="text-sm font-semibold text-gray-900">Requirements & Design</p>
+                    <p className="text-xs text-green-600 font-medium mt-0.5">Completed</p>
+                  </div>
+                </div>
+
+                {/* Step 2: Completed */}
+                <div className="relative z-10 flex flex-col items-center group w-32">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center bg-green-500 text-white shadow ring-4 ring-white">
+                    <Check className="w-5 h-5" />
+                  </div>
+                  <div className="mt-3 text-center">
+                    <p className="text-sm font-semibold text-gray-900">Frontend Layout</p>
+                    <p className="text-xs text-green-600 font-medium mt-0.5">Completed</p>
+                  </div>
+                </div>
+
+                {/* Step 3: In Progress */}
+                <div className="relative z-10 flex flex-col items-center group w-32">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center bg-brand-blue text-white shadow ring-4 ring-white animate-pulse">
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  </div>
+                  <div className="mt-3 text-center">
+                    <p className="text-sm font-semibold text-gray-900">Backend Integration</p>
+                    <p className="text-xs text-blue-600 font-medium mt-0.5">In Progress</p>
+                  </div>
+                </div>
+
+                {/* Step 4: Pending */}
+                <div className="relative z-10 flex flex-col items-center group w-32">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-200 text-gray-500 shadow ring-4 ring-white">
+                    <TestTube2 className="w-5 h-5" />
+                  </div>
+                  <div className="mt-3 text-center">
+                    <p className="text-sm font-medium text-gray-500">Testing</p>
+                    <p className="text-xs text-gray-400 mt-0.5">Pending</p>
+                  </div>
+                </div>
+
+                {/* Step 5: Pending */}
+                <div className="relative z-10 flex flex-col items-center group w-32">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-200 text-gray-500 shadow ring-4 ring-white">
+                    <Flag className="w-5 h-5" />
+                  </div>
+                  <div className="mt-3 text-center">
+                    <p className="text-sm font-medium text-gray-500">Final Delivery</p>
+                    <p className="text-xs text-gray-400 mt-0.5">Pending</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile View (Vertical) */}
+            <div className="md:hidden space-y-6 relative border-l-2 border-gray-200 ml-4 pl-6">
+              {/* Step 1: Completed */}
+              <div className="relative">
+                <div className="absolute -left-11 w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center ring-4 ring-white shadow-sm">
+                  <Check className="w-4 h-4" />
+                </div>
+                <div className="bg-slate-50 p-3 rounded-lg border border-gray-100 shadow-sm">
+                  <p className="text-sm font-semibold text-gray-900">Requirements & Design</p>
+                  <p className="text-xs text-green-600 font-medium mt-0.5">Completed</p>
+                </div>
+              </div>
+              
+              {/* Step 2: Completed */}
+              <div className="relative">
+                <div className="absolute -left-11 w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center ring-4 ring-white shadow-sm">
+                  <Check className="w-4 h-4" />
+                </div>
+                <div className="bg-slate-50 p-3 rounded-lg border border-gray-100 shadow-sm">
+                  <p className="text-sm font-semibold text-gray-900">Frontend Layout</p>
+                  <p className="text-xs text-green-600 font-medium mt-0.5">Completed</p>
+                </div>
+              </div>
+
+              {/* Step 3: In Progress */}
+              <div className="relative">
+                <div className="absolute -left-11 w-8 h-8 rounded-full bg-brand-blue text-white flex items-center justify-center ring-4 ring-white shadow-sm animate-pulse">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                </div>
+                <div className="bg-blue-50 p-3 rounded-lg border border-blue-100 shadow-sm">
+                  <p className="text-sm font-semibold text-brand-blue">Backend Integration</p>
+                  <p className="text-xs text-blue-600 font-medium mt-0.5">In Progress</p>
+                </div>
+              </div>
+
+              {/* Step 4: Pending */}
+              <div className="relative">
+                <div className="absolute -left-11 w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center ring-4 ring-white shadow-sm">
+                  <TestTube2 className="w-4 h-4" />
+                </div>
+                <div className="bg-gray-50 p-3 rounded-lg border border-gray-100 shadow-sm">
+                  <p className="text-sm font-medium text-gray-600">Testing</p>
+                  <p className="text-xs text-gray-400 mt-0.5">Pending</p>
+                </div>
+              </div>
+
+              {/* Step 5: Pending */}
+              <div className="relative">
+                <div className="absolute -left-11 w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center ring-4 ring-white shadow-sm">
+                  <Flag className="w-4 h-4" />
+                </div>
+                <div className="bg-gray-50 p-3 rounded-lg border border-gray-100 shadow-sm">
+                  <p className="text-sm font-medium text-gray-600">Final Delivery</p>
+                  <p className="text-xs text-gray-400 mt-0.5">Pending</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Feature Kanban / Checklist */}
+        <section>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+            <Trello className="text-brand-blue w-6 h-6" />
+            Feature Status
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Completed Column */}
+            <div className="bg-gray-50 rounded-xl p-5 border border-gray-200 shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-green-500"></span>
+                  Completed
+                </h3>
+                <span className="text-xs font-semibold bg-gray-200 text-gray-600 px-2.5 py-1 rounded-full">3</span>
+              </div>
+              <div className="space-y-3">
+                <div className="bg-white p-3.5 rounded-lg shadow-sm border border-gray-100 border-l-4 border-l-green-500 transition-shadow hover:shadow-md">
+                  <p className="text-sm font-medium text-gray-800">Responsive Navbar</p>
+                </div>
+                <div className="bg-white p-3.5 rounded-lg shadow-sm border border-gray-100 border-l-4 border-l-green-500 transition-shadow hover:shadow-md">
+                  <p className="text-sm font-medium text-gray-800">Hero Section & UI System</p>
+                </div>
+                <div className="bg-white p-3.5 rounded-lg shadow-sm border border-gray-100 border-l-4 border-l-green-500 transition-shadow hover:shadow-md">
+                  <p className="text-sm font-medium text-gray-800">About Us Page Layout</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Working On Column */}
+            <div className="bg-blue-50/50 rounded-xl p-5 border border-blue-100 shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-brand-blue flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse"></span>
+                  Working On
+                </h3>
+                <span className="text-xs font-semibold bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full">2</span>
+              </div>
+              <div className="space-y-3">
+                <div className="bg-white p-3.5 rounded-lg shadow-sm border border-blue-50 border-l-4 border-l-blue-500 transition-shadow hover:shadow-md">
+                  <p className="text-sm font-medium text-gray-800">Donation Gateway Integration</p>
+                </div>
+                <div className="bg-white p-3.5 rounded-lg shadow-sm border border-blue-50 border-l-4 border-l-blue-500 transition-shadow hover:shadow-md">
+                  <p className="text-sm font-medium text-gray-800">Admin Dashboard UI</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Up Next Column */}
+            <div className="bg-gray-50 rounded-xl p-5 border border-gray-200 shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-gray-600 flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-gray-400"></span>
+                  Up Next
+                </h3>
+                <span className="text-xs font-semibold bg-gray-200 text-gray-600 px-2.5 py-1 rounded-full">2</span>
+              </div>
+              <div className="space-y-3">
+                <div className="bg-white p-3.5 rounded-lg shadow-sm border border-gray-100 border-l-4 border-l-gray-400 opacity-80 hover:opacity-100 transition-opacity">
+                  <p className="text-sm font-medium text-gray-800">Volunteer Registration Form</p>
+                </div>
+                <div className="bg-white p-3.5 rounded-lg shadow-sm border border-gray-100 border-l-4 border-l-gray-400 opacity-80 hover:opacity-100 transition-opacity">
+                  <p className="text-sm font-medium text-gray-800">Events Calendar Page</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Recent Updates / Changelog */}
+        <section>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+            <History className="text-brand-blue w-6 h-6" />
+            Recent Updates
+          </h2>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <ul className="divide-y divide-gray-100">
+              <li className="p-5 hover:bg-gray-50 transition-colors flex flex-col sm:flex-row gap-3 sm:gap-6 sm:items-start">
+                <span className="inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 whitespace-nowrap">
+                  Today
+                </span>
+                <div>
+                  <p className="text-sm text-gray-800 leading-relaxed">Started integration of payment gateway for donations and database schema planning.</p>
+                </div>
+              </li>
+              <li className="p-5 hover:bg-gray-50 transition-colors flex flex-col sm:flex-row gap-3 sm:gap-6 sm:items-start">
+                <span className="inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 whitespace-nowrap">
+                  May 08, 2026
+                </span>
+                <div>
+                  <p className="text-sm text-gray-800 leading-relaxed">Deployed initial landing page layout. Fixed responsive issues on mobile for the hero section.</p>
+                </div>
+              </li>
+              <li className="p-5 hover:bg-gray-50 transition-colors flex flex-col sm:flex-row gap-3 sm:gap-6 sm:items-start">
+                <span className="inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 whitespace-nowrap">
+                  May 06, 2026
+                </span>
+                <div>
+                  <p className="text-sm text-gray-800 leading-relaxed">Finalized color palette, typography, and set up core UI components using Tailwind CSS.</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-white border-t border-gray-200 mt-12 py-6 mt-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-gray-500">
+            &copy; {currentYear} Developer Showcase. All rights reserved.
+          </p>
+          <p className="text-sm font-medium text-gray-600 flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
+            <Clock className="w-4 h-4 text-gray-400" />
+            Last Updated: <span className="text-brand-blue font-semibold">{lastUpdated}</span>
           </p>
         </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+      </footer>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
